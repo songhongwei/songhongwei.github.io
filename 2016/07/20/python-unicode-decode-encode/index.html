@@ -3,17 +3,33 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Tag: acker | hongwei&#39;s blog</title>
+  <title>python的decode与encode | hongwei&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="关注ML，NLP，内容推荐">
-<meta property="og:type" content="website">
-<meta property="og:title" content="hongwei's blog">
-<meta property="og:url" content="http://hongwei.org/tags/acker/index.html">
+  <meta name="description" content="用python处理中文时，总会遇到编码错误。傻傻的分不清什么时候该用decode，什么时候该用encode。
+unicode首先,明确一个基本的概念:计算机用数字代表每一个字符,unicode就是这样一种通用的编码规范.
+utf8现在,unicode将每个字符表示成一个唯一的,无歧义的数字了.在计算机中如何存储这些数字呢?
+有两种解决方案:
+
+定长的: 因为unicode最大的编码数字是0x7FF">
+<meta property="og:type" content="article">
+<meta property="og:title" content="python的decode与encode">
+<meta property="og:url" content="http://hongwei.org/2016/07/20/python-unicode-decode-encode/index.html">
 <meta property="og:site_name" content="hongwei's blog">
-<meta property="og:description" content="关注ML，NLP，内容推荐">
+<meta property="og:description" content="用python处理中文时，总会遇到编码错误。傻傻的分不清什么时候该用decode，什么时候该用encode。
+unicode首先,明确一个基本的概念:计算机用数字代表每一个字符,unicode就是这样一种通用的编码规范.
+utf8现在,unicode将每个字符表示成一个唯一的,无歧义的数字了.在计算机中如何存储这些数字呢?
+有两种解决方案:
+
+定长的: 因为unicode最大的编码数字是0x7FF">
+<meta property="og:updated_time" content="2016-07-19T17:15:07.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="hongwei's blog">
-<meta name="twitter:description" content="关注ML，NLP，内容推荐">
+<meta name="twitter:title" content="python的decode与encode">
+<meta name="twitter:description" content="用python处理中文时，总会遇到编码错误。傻傻的分不清什么时候该用decode，什么时候该用encode。
+unicode首先,明确一个基本的概念:计算机用数字代表每一个字符,unicode就是这样一种通用的编码规范.
+utf8现在,unicode将每个字符表示成一个唯一的,无歧义的数字了.在计算机中如何存储这些数字呢?
+有两种解决方案:
+
+定长的: 因为unicode最大的编码数字是0x7FF">
   
     <link rel="alternate" href="/atom.xml" title="hongwei&#39;s blog" type="application/atom+xml">
   
@@ -78,40 +94,93 @@
 
     <div class="row">
         <div class="col-sm-8 blog-main">
-          
-  
-  
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2015" class="archive-year">2015</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <header class="archive-article-header">
+          <article id="post-python-unicode-decode-encode" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
     
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2015/08/09/storm-acker-xor/">学storm的acker机制有感</a>
+    <h1 class="article-title" itemprop="name">
+      python的decode与encode
     </h1>
   
 
 
+  </header>
+
+  <div class="article-meta">
     <div class="article-datetime">
-  <a href="/2015/08/09/storm-acker-xor/" class="archive-article-date"><time datetime="2015-08-09T00:59:10.000Z" itemprop="datePublished">August 9th</time></a>
+  <a href="/2016/07/20/python-unicode-decode-encode/" class="article-date"><time datetime="2016-07-20T01:10:44.000Z" itemprop="datePublished">2016-07-20</time></a>
 </div>
 
-  </header>
-</article>
+    
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/编程语言/">编程语言</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>用python处理中文时，总会遇到编码错误。傻傻的分不清什么时候该用decode，什么时候该用encode。</p>
+<h1 id="unicode"><a href="#unicode" class="headerlink" title="unicode"></a>unicode</h1><p>首先,明确一个基本的概念:计算机用数字代表每一个字符,unicode就是这样一种通用的编码规范.</p>
+<h1 id="utf8"><a href="#utf8" class="headerlink" title="utf8"></a>utf8</h1><p>现在,unicode将每个字符表示成一个唯一的,无歧义的数字了.在计算机中如何存储这些数字呢?</p>
+<p>有两种解决方案:</p>
+<ul>
+<li><p>定长的: 因为unicode最大的编码数字是0x7FFFFFFF,于是为了能用一个长度固定的字节组合来表示所有可能的字符,每个字符需要8个字节.这样解析一个文本就只需要从头开始,把每八个字节转换成一个数字,查一下这个数字对应是什么字符.</p>
+</li>
+<li><p>可变长的:显然,定长的虽然解析起来简单,但是有很大的空间浪费问题.编码较小的字符是完全可以用较少的字节数来存储的,不需要为了能表示可能的编码极大的字符,就让每个字符都用最大的字节数来存储.</p>
+</li>
+</ul>
+<p>UTF-8就是这样一种字节可变长的存储方案.一个重要的问题就是,如何无歧义的知道连续几个字节存储了一个字符呢?</p>
+<p>UTF-8的编码规则很简单，只有二条：</p>
+<ul>
+<li>对于单字节的符号，字节的第一位设为0，后面7位为这个符号的unicode码。因此对于英语字母，UTF-8编码和ASCII码是相同的。</li>
+<li>对于n字节的符号（n&gt;1），第一个字节的前n位都设为1，第n+1位设为0，后面字节的前两位一律设为10。这些字节中剩下的没有提及的二进制位，全部为这个符号的unicode码。</li>
+</ul>
+<h1 id="decode解码"><a href="#decode解码" class="headerlink" title="decode解码"></a>decode解码</h1><p>因为有很多编码方案,于是用python处理非ASCII码表示外的字符(如中文字符)时,需要告诉python我们要处理的文本用的是哪个编码方案.这样python读取文本时,才知道每个字符的编码是定长的还是变长的,如果是定长的,用了几个字节;如果是变长的,怎么识别哪几个字节代表了一个字符.</p>
+<p>“中文”.decode(“utf8”)</p>
+<h1 id="encode编码"><a href="#encode编码" class="headerlink" title="encode编码"></a>encode编码</h1><p>同样的,用python写文件时,也需要告诉python,我们希望用哪个编码方案存储字符.</p>
+<p>u”中文”.encode(“utf8”)</p>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://hongwei.org/2016/07/20/python-unicode-decode-encode/" data-id="ciqtq3yyw000189cmeukdqoek" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/decode/">decode</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/encode/">encode</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/pyhton/">pyhton</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/unicode/">unicode</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+    
+<ul id="article-nav" class="nav nav-pills nav-justified">
+  
+  <li role="presentation">
+    <a href="/2016/07/20/python-read-file-efficiently/" id="article-nav-older" class="article-nav-link-wrap">
+      <i class="fa fa-chevron-left pull-left"></i>
+      <span class="article-nav-link-title">用Python高效的读取文件</span>
+    </a>
+  </li>
+  
+  
+</ul>
+
 
   
-  
-    </div></section>
-  
+</article>
 
 
 

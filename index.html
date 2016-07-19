@@ -80,6 +80,215 @@
         <div class="col-sm-8 blog-main">
           
   
+    <article id="post-python-unicode-decode-encode" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/07/20/python-unicode-decode-encode/">python的decode与encode</a>
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2016/07/20/python-unicode-decode-encode/" class="article-date"><time datetime="2016-07-20T01:10:44.000Z" itemprop="datePublished">2016-07-20</time></a>
+</div>
+
+    
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/编程语言/">编程语言</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>用python处理中文时，总会遇到编码错误。傻傻的分不清什么时候该用decode，什么时候该用encode。</p>
+<h1 id="unicode"><a href="#unicode" class="headerlink" title="unicode"></a>unicode</h1><p>首先,明确一个基本的概念:计算机用数字代表每一个字符,unicode就是这样一种通用的编码规范.</p>
+<h1 id="utf8"><a href="#utf8" class="headerlink" title="utf8"></a>utf8</h1><p>现在,unicode将每个字符表示成一个唯一的,无歧义的数字了.在计算机中如何存储这些数字呢?</p>
+<p>有两种解决方案:</p>
+<ul>
+<li><p>定长的: 因为unicode最大的编码数字是0x7FFFFFFF,于是为了能用一个长度固定的字节组合来表示所有可能的字符,每个字符需要8个字节.这样解析一个文本就只需要从头开始,把每八个字节转换成一个数字,查一下这个数字对应是什么字符.</p>
+</li>
+<li><p>可变长的:显然,定长的虽然解析起来简单,但是有很大的空间浪费问题.编码较小的字符是完全可以用较少的字节数来存储的,不需要为了能表示可能的编码极大的字符,就让每个字符都用最大的字节数来存储.</p>
+</li>
+</ul>
+<p>UTF-8就是这样一种字节可变长的存储方案.一个重要的问题就是,如何无歧义的知道连续几个字节存储了一个字符呢?</p>
+<p>UTF-8的编码规则很简单，只有二条：</p>
+<ul>
+<li>对于单字节的符号，字节的第一位设为0，后面7位为这个符号的unicode码。因此对于英语字母，UTF-8编码和ASCII码是相同的。</li>
+<li>对于n字节的符号（n&gt;1），第一个字节的前n位都设为1，第n+1位设为0，后面字节的前两位一律设为10。这些字节中剩下的没有提及的二进制位，全部为这个符号的unicode码。</li>
+</ul>
+<h1 id="decode解码"><a href="#decode解码" class="headerlink" title="decode解码"></a>decode解码</h1><p>因为有很多编码方案,于是用python处理非ASCII码表示外的字符(如中文字符)时,需要告诉python我们要处理的文本用的是哪个编码方案.这样python读取文本时,才知道每个字符的编码是定长的还是变长的,如果是定长的,用了几个字节;如果是变长的,怎么识别哪几个字节代表了一个字符.</p>
+<p>“中文”.decode(“utf8”)</p>
+<h1 id="encode编码"><a href="#encode编码" class="headerlink" title="encode编码"></a>encode编码</h1><p>同样的,用python写文件时,也需要告诉python,我们希望用哪个编码方案存储字符.</p>
+<p>u”中文”.encode(“utf8”)</p>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://hongwei.org/2016/07/20/python-unicode-decode-encode/" data-id="ciqtq3yyw000189cmeukdqoek" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/decode/">decode</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/encode/">encode</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/pyhton/">pyhton</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/unicode/">unicode</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-python-read-file-efficiently" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/07/20/python-read-file-efficiently/">用Python高效的读取文件</a>
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2016/07/20/python-read-file-efficiently/" class="article-date"><time datetime="2016-07-20T00:53:49.000Z" itemprop="datePublished">2016-07-20</time></a>
+</div>
+
+    
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/编程语言/">编程语言</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>参考:<a href="http://stackoverflow.com/questions/8009882/how-to-read-large-file-line-by-line-in-python" target="_blank" rel="external">http://stackoverflow.com/questions/8009882/how-to-read-large-file-line-by-line-in-python</a></p>
+<p>用python读文件时,python提供了三个基本的函数: read, readline, readlines.</p>
+<p>通常,处理普通大小的文件时,我会无脑的使用 readlines  读文件. 实际上,调用readlines会一次加载全部文件内容到内存中,并按行保存为列表. 因此,如果文件大到内存放不下时,readlines就不适用了.</p>
+<p>为此,我选择用readline逐行的将文本加载到内存,代码如下:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">while</span> <span class="keyword">True</span>: </div><div class="line">    line = f.readline()</div><div class="line">    <span class="keyword">if</span> <span class="keyword">not</span> line : <span class="keyword">break</span></div><div class="line">    do something <span class="keyword">with</span> line</div></pre></td></tr></table></figure>
+<p>这样做虽然可以处理大文本了,但是读取效率会被磁盘io的速度拖累.</p>
+<p>进而,也许我们可以使用read(size)方法一次加载size长度的数据到内存,但是我们不得不手动将读取到的数据切分成行.并且要处理某一行被截断的情况.</p>
+<p>其实,依靠python强大的功能,我们可以用如下的更优雅的方法:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">with</span> open(...) <span class="keyword">as</span> f:</div><div class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> f:</div><div class="line">        &lt;do something <span class="keyword">with</span> line&gt;</div></pre></td></tr></table></figure>
+<p>python自动帮我们处理io缓存,内存管理等问题.经过我实践操作,效率至少比用readline高一倍以上.</p>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://hongwei.org/2016/07/20/python-read-file-efficiently/" data-id="ciqtq3yyr000089cms611an7r" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/python/">python</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/读文件/">读文件</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-storm-SingleJoin" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/07/20/storm-SingleJoin/">storm实例分析小结—SingleJoin</a>
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2016/07/20/storm-SingleJoin/" class="article-date"><time datetime="2016-07-20T00:43:10.000Z" itemprop="datePublished">2016-07-20</time></a>
+</div>
+
+    
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/分布式/">分布式</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>流聚合是storm的一个常见模式，storm官方给出了相关的实例：<a href="https://github.com/apache/storm/blob/master/examples/storm-starter/src/jvm/storm/starter/SingleJoinExample.java" target="_blank" rel="external">SingleJoinExample</a>。</p>
+<h2 id="锚点anchor"><a href="#锚点anchor" class="headerlink" title="锚点anchor"></a>锚点anchor</h2><p>在网上找到了一个对该实例讲解的博文：<a href="http://www.cnblogs.com/panfeng412/archive/2012/06/04/storm-common-patterns-of-stream-join.html" target="_blank" rel="external">Storm常见模式——流聚合</a>。讲解的还算清楚，不过最后有一个错误：</p>
+<blockquote>
+<p>最后通过_collector将parts中存放的tuple和聚合后的输出结果发射出去，并ack这些tuple已经处理成功。<br>_collector.emit(new ArrayList<tuple>(parts.values()), joinResult);</tuple></p>
+</blockquote>
+<p>问题在于，<code>parts</code>中存放的<code>tuple:new ArrayList&lt;Tuple&gt;(parts.values())</code>不是被发射出去了，而是作为<code>joinResult</code>设置为锚点(<code>anchor</code>)了。锚点的概念作用见：<a href="http://storm.apache.org/releases/current/Guaranteeing-message-processing.html" target="_blank" rel="external">Guaranteeing-message-processing</a>。</p>
+<h2 id="TimeCacheMap"><a href="#TimeCacheMap" class="headerlink" title="TimeCacheMap"></a>TimeCacheMap</h2><p>在这个实例中还提到了storm中一个很高效的数据结构：<code>TimeCacheMap</code>。如果你需要一个带有过期删除功能的Map作为缓存数据结构，TimeCacheMap是一个很高效的解决方案。这篇博文<a href="http://www.cnblogs.com/mushroom/p/4805413.html" target="_blank" rel="external">探索c#之storm的TimeCacheMap</a>对TimeCacheMap讲解的非常赞！相比来说，徐明明的<a href="http://xumingming.sinaapp.com/395/twitter-storm-code-analysis-timecahcemap/" target="_blank" rel="external">Twitter Storm源代码分析之TimeCacheMap</a>讲解就逊色了些，他对该数据结构的效率的解释有误，讲解的例子也不够到位：</p>
+<blockquote>
+<p>那为什么说时间是expirationSecs到expirationSecs * (1 + 1 / (numBuckets-1))之间呢？因为线程调度的不确定性。</p>
+</blockquote>
+<p>这个解释有点想当然了。我觉得延迟是由于数据随机到达,而删除操作是定时的.<br>TimeCacheMap优点是删除时间是O(1)的；缺点是对于大部分数据，删除操作会有延迟。</p>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://hongwei.org/2016/07/20/storm-SingleJoin/" data-id="ciqtq3yz3000489cmyruerli2" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/TimeCacheMap/">TimeCacheMap</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-storm-topology-jar" class="article article-type-post" itemscope itemprop="blogPost">
 
   <header class="article-header">
@@ -110,7 +319,8 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>前一阵连续遇到好几次在Storm上提交Topology不生效的问题。问题是这样的：<br>首先将具有<code>A.java</code>的jar包<code>1.jar</code>传到<code>storm/lib</code>下，用<code>storm jar lib/1.jar A</code>命令提交Topology。<br>不久后更新了<code>A.java</code>文件里的代码，并将工程重新打包成jar包<code>2.jar</code>，同样传到<code>storm/lib</code>下（并没有删掉<code>1.jar</code>），此时kill掉旧Topology后，用<code>storm jar lib/2.jar A</code>命令提交Topology。这时发现运行的Topology仍然是更新前的，更新的代码并没有生效。<br>这个问题困惑了我好久，我明明指定了jar包名了啊！最后突然想起：storm/lib目录作为storm的classpath，当storm在调用任何需要的类时，会先在storm/lib下查找，因此便出现这样的情况：我本意想运行lib/2.jar中的类A，但是storm实际会找到lib/1.jar中的类A。</p>
+        <p>前一阵连续遇到好几次在Storm上提交Topology不生效的问题。</p>
+<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>问题是这样的：<br>首先将具有<code>A.java</code>的jar包<code>1.jar</code>传到<code>storm/lib</code>下，用<code>storm jar lib/1.jar A</code>命令提交Topology。<br>不久后更新了<code>A.java</code>文件里的代码，并将工程重新打包成jar包<code>2.jar</code>，同样传到<code>storm/lib</code>下（并没有删掉<code>1.jar</code>），此时kill掉旧Topology后，用<code>storm jar lib/2.jar A</code>命令提交Topology。这时发现运行的Topology仍然是更新前的，更新的代码并没有生效。<br>这个问题困惑了我好久，我明明指定了jar包名了啊！最后突然想起：storm/lib目录作为storm的classpath，当storm在调用任何需要的类时，会先在storm/lib下查找，因此便出现这样的情况：我本意想运行lib/2.jar中的类A，但是storm实际会找到lib/1.jar中的类A。</p>
 <h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><p>因此，我的解决方法是：把打好的jar包放到新目录myTopology下。</p>
 
       
@@ -122,7 +332,7 @@
     
 
     <footer class="article-footer">
-      <a data-url="http://hongwei.org/2016/07/18/storm-topology-jar/" data-id="ciqqyootj00007acm7ynw3pjq" class="article-share-link">
+      <a data-url="http://hongwei.org/2016/07/18/storm-topology-jar/" data-id="ciqtq3yz7000589cmtek6w5y7" class="article-share-link">
         <i class="fa fa-share"></i> Share
       </a>
       
@@ -168,7 +378,7 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="storm"><a href="#storm" class="headerlink" title="storm"></a>storm</h2><p>storm是一个分布式实时计算系统。它最大的一个特点就是可靠性，即：保证每一个节点至少被处理一次。</p>
+        <p>storm是一个分布式实时计算系统。它最大的一个特点就是可靠性，即：保证每一个节点至少被处理一次。</p>
 <h2 id="acker机制"><a href="#acker机制" class="headerlink" title="acker机制"></a>acker机制</h2><p>在可靠的处理过程中，storm使用acker机制维护着从spout发出的Tuple节点为根的整个Tuple树。在任何处理节点发射出的tuple都要与其父节点建立锚点，当一个tuple处理完毕时也要被确认。基于这样有保证的处理，storm需要判断在超时时间内（默认是30秒），tuple树的节点是否都被确认了。如果没有，则要从spout出发，重新发射根节点tuple。 </p>
 <h2 id="xor操作"><a href="#xor操作" class="headerlink" title="xor操作"></a>xor操作</h2><p>比较有意思的是，storm的acker机制利用了非常高效的方法来跟踪整个tuple树的确认情况。首先，storm会为每个tuple分配一个64位的数值型id；在此基础之上，当一个tuple树每发射一个tuple时，storm会异或这个tuple id；每个tuple被确认后，同样异或下这个tuple的id值。当发现异或的结果为零时，storm就认为整个tuple树的所有tuple都被确认了；否则，就从根节点进行重发操作，从而保证了可靠性。<br>学习storm的acker机制后，我想到了校招时遇到的一个算法题：如何判断一个整数数组中的所有元素均是成对出现的。那时看了答案才知道怎么解这道题：就是将数组中所有元素都异或到一起，看结果就否为0。因为一个数和自己异或的值为0，因此如果结果为0，那么就说明数组中的所有数都是成对出现的了。当时觉得解法很巧妙，很高效；同时也觉得然并卵，会这种算法题有什么意义呢？现在才恍然大悟，原来这些算法题都是从实际工作中抽象、总结出来的精华啊！<br>以后要多做算法题！</p>
 
@@ -181,7 +391,7 @@
     
 
     <footer class="article-footer">
-      <a data-url="http://hongwei.org/2015/08/09/storm-acker-xor/" data-id="ciqqyooto00017acmx3025uoh" class="article-share-link">
+      <a data-url="http://hongwei.org/2015/08/09/storm-acker-xor/" data-id="ciqtq3yzb000789cmo8vjle4z" class="article-share-link">
         <i class="fa fa-share"></i> Share
       </a>
       
@@ -207,7 +417,7 @@
   
   <div class="sidebar-module">
     <h4>Categories</h4>
-    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/分布式/">分布式</a><span class="sidebar-module-list-count">2</span></li></ul>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/分布式/">分布式</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/编程语言/">编程语言</a><span class="sidebar-module-list-count">2</span></li></ul>
   </div>
 
 
@@ -215,7 +425,7 @@
   
   <div class="sidebar-module">
     <h4>Tags</h4>
-    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/acker/">acker</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/storm/">storm</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/异或/">异或</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/算法/">算法</a><span class="sidebar-module-list-count">1</span></li></ul>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/TimeCacheMap/">TimeCacheMap</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/acker/">acker</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/decode/">decode</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/encode/">encode</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/pyhton/">pyhton</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/python/">python</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/storm/">storm</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/unicode/">unicode</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/异或/">异或</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/算法/">算法</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/读文件/">读文件</a><span class="sidebar-module-list-count">1</span></li></ul>
   </div>
 
 
@@ -224,7 +434,7 @@
   <div class="sidebar-module">
     <h4>Tag Cloud</h4>
     <p class="tagcloud">
-      <a href="/tags/acker/" style="font-size: 10px;">acker</a> <a href="/tags/storm/" style="font-size: 20px;">storm</a> <a href="/tags/异或/" style="font-size: 10px;">异或</a> <a href="/tags/算法/" style="font-size: 10px;">算法</a>
+      <a href="/tags/TimeCacheMap/" style="font-size: 10px;">TimeCacheMap</a> <a href="/tags/acker/" style="font-size: 10px;">acker</a> <a href="/tags/decode/" style="font-size: 10px;">decode</a> <a href="/tags/encode/" style="font-size: 10px;">encode</a> <a href="/tags/pyhton/" style="font-size: 10px;">pyhton</a> <a href="/tags/python/" style="font-size: 10px;">python</a> <a href="/tags/storm/" style="font-size: 20px;">storm</a> <a href="/tags/unicode/" style="font-size: 10px;">unicode</a> <a href="/tags/异或/" style="font-size: 10px;">异或</a> <a href="/tags/算法/" style="font-size: 10px;">算法</a> <a href="/tags/读文件/" style="font-size: 10px;">读文件</a>
     </p>
   </div>
 
@@ -232,7 +442,7 @@
   
   <div class="sidebar-module">
     <h4>Archives</h4>
-    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/07/">July 2016</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2015/08/">August 2015</a><span class="sidebar-module-list-count">1</span></li></ul>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/07/">July 2016</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2015/08/">August 2015</a><span class="sidebar-module-list-count">1</span></li></ul>
   </div>
 
 
@@ -241,6 +451,18 @@
   <div class="sidebar-module">
     <h4>Recents</h4>
     <ul class="sidebar-module-list">
+      
+        <li>
+          <a href="/2016/07/20/python-unicode-decode-encode/">python的decode与encode</a>
+        </li>
+      
+        <li>
+          <a href="/2016/07/20/python-read-file-efficiently/">用Python高效的读取文件</a>
+        </li>
+      
+        <li>
+          <a href="/2016/07/20/storm-SingleJoin/">storm实例分析小结—SingleJoin</a>
+        </li>
       
         <li>
           <a href="/2016/07/18/storm-topology-jar/">在storm上提交jar包不生效的问题</a>

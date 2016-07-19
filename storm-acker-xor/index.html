@@ -3,21 +3,21 @@
 <head>
   <meta charset="utf-8">
   
-  <title>在storm上提交jar包不生效的问题 | hongwei&#39;s blog</title>
+  <title>学storm的acker机制有感 | hongwei&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="前一阵连续遇到好几次在Storm上提交Topology不生效的问题。
-问题问题是这样的：首先将具有A.java的jar包1.jar传到storm/lib下，用storm jar lib/1.jar A命令提交Topology。不久后更新了A.java文件里的代码，并将工程重新打包成jar包2.jar，同样传到storm/lib下（并没有删掉1.jar），此时kill掉旧Topology后，用sto">
+  <meta name="description" content="storm是一个分布式实时计算系统。它最大的一个特点就是可靠性，即：保证每一个节点至少被处理一次。
+acker机制在可靠的处理过程中，storm使用acker机制维护着从spout发出的Tuple节点为根的整个Tuple树。在任何处理节点发射出的tuple都要与其父节点建立锚点，当一个tuple处理完毕时也要被确认。基于这样有保证的处理，storm需要判断在超时时间内（默认是30秒），tuple树">
 <meta property="og:type" content="article">
-<meta property="og:title" content="在storm上提交jar包不生效的问题">
-<meta property="og:url" content="http://hongwei.org/2016/07/18/storm-topology-jar/index.html">
+<meta property="og:title" content="学storm的acker机制有感">
+<meta property="og:url" content="http://hongwei.org/storm-acker-xor/index.html">
 <meta property="og:site_name" content="hongwei's blog">
-<meta property="og:description" content="前一阵连续遇到好几次在Storm上提交Topology不生效的问题。
-问题问题是这样的：首先将具有A.java的jar包1.jar传到storm/lib下，用storm jar lib/1.jar A命令提交Topology。不久后更新了A.java文件里的代码，并将工程重新打包成jar包2.jar，同样传到storm/lib下（并没有删掉1.jar），此时kill掉旧Topology后，用sto">
-<meta property="og:updated_time" content="2016-07-19T16:49:45.000Z">
+<meta property="og:description" content="storm是一个分布式实时计算系统。它最大的一个特点就是可靠性，即：保证每一个节点至少被处理一次。
+acker机制在可靠的处理过程中，storm使用acker机制维护着从spout发出的Tuple节点为根的整个Tuple树。在任何处理节点发射出的tuple都要与其父节点建立锚点，当一个tuple处理完毕时也要被确认。基于这样有保证的处理，storm需要判断在超时时间内（默认是30秒），tuple树">
+<meta property="og:updated_time" content="2016-07-19T16:50:18.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="在storm上提交jar包不生效的问题">
-<meta name="twitter:description" content="前一阵连续遇到好几次在Storm上提交Topology不生效的问题。
-问题问题是这样的：首先将具有A.java的jar包1.jar传到storm/lib下，用storm jar lib/1.jar A命令提交Topology。不久后更新了A.java文件里的代码，并将工程重新打包成jar包2.jar，同样传到storm/lib下（并没有删掉1.jar），此时kill掉旧Topology后，用sto">
+<meta name="twitter:title" content="学storm的acker机制有感">
+<meta name="twitter:description" content="storm是一个分布式实时计算系统。它最大的一个特点就是可靠性，即：保证每一个节点至少被处理一次。
+acker机制在可靠的处理过程中，storm使用acker机制维护着从spout发出的Tuple节点为根的整个Tuple树。在任何处理节点发射出的tuple都要与其父节点建立锚点，当一个tuple处理完毕时也要被确认。基于这样有保证的处理，storm需要判断在超时时间内（默认是30秒），tuple树">
   
     <link rel="alternate" href="/atom.xml" title="hongwei&#39;s blog" type="application/atom+xml">
   
@@ -82,13 +82,13 @@
 
     <div class="row">
         <div class="col-sm-8 blog-main">
-          <article id="post-storm-topology-jar" class="article article-type-post" itemscope itemprop="blogPost">
+          <article id="post-storm-acker-xor" class="article article-type-post" itemscope itemprop="blogPost">
 
   <header class="article-header">
     
   
     <h1 class="article-title" itemprop="name">
-      在storm上提交jar包不生效的问题
+      学storm的acker机制有感
     </h1>
   
 
@@ -97,7 +97,7 @@
 
   <div class="article-meta">
     <div class="article-datetime">
-  <a href="/2016/07/18/storm-topology-jar/" class="article-date"><time datetime="2016-07-18T02:47:22.000Z" itemprop="datePublished">2016-07-18</time></a>
+  <a href="/storm-acker-xor/" class="article-date"><time datetime="2015-08-09T00:59:10.000Z" itemprop="datePublished">2015-08-09</time></a>
 </div>
 
     
@@ -112,9 +112,9 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <p>前一阵连续遇到好几次在Storm上提交Topology不生效的问题。</p>
-<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>问题是这样的：<br>首先将具有<code>A.java</code>的jar包<code>1.jar</code>传到<code>storm/lib</code>下，用<code>storm jar lib/1.jar A</code>命令提交Topology。<br>不久后更新了<code>A.java</code>文件里的代码，并将工程重新打包成jar包<code>2.jar</code>，同样传到<code>storm/lib</code>下（并没有删掉<code>1.jar</code>），此时kill掉旧Topology后，用<code>storm jar lib/2.jar A</code>命令提交Topology。这时发现运行的Topology仍然是更新前的，更新的代码并没有生效。<br>这个问题困惑了我好久，我明明指定了jar包名了啊！最后突然想起：storm/lib目录作为storm的classpath，当storm在调用任何需要的类时，会先在storm/lib下查找，因此便出现这样的情况：我本意想运行lib/2.jar中的类A，但是storm实际会找到lib/1.jar中的类A。</p>
-<h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><p>因此，我的解决方法是：把打好的jar包放到新目录myTopology下。</p>
+        <p>storm是一个分布式实时计算系统。它最大的一个特点就是可靠性，即：保证每一个节点至少被处理一次。</p>
+<h2 id="acker机制"><a href="#acker机制" class="headerlink" title="acker机制"></a>acker机制</h2><p>在可靠的处理过程中，storm使用acker机制维护着从spout发出的Tuple节点为根的整个Tuple树。在任何处理节点发射出的tuple都要与其父节点建立锚点，当一个tuple处理完毕时也要被确认。基于这样有保证的处理，storm需要判断在超时时间内（默认是30秒），tuple树的节点是否都被确认了。如果没有，则要从spout出发，重新发射根节点tuple。 </p>
+<h2 id="xor操作"><a href="#xor操作" class="headerlink" title="xor操作"></a>xor操作</h2><p>比较有意思的是，storm的acker机制利用了非常高效的方法来跟踪整个tuple树的确认情况。首先，storm会为每个tuple分配一个64位的数值型id；在此基础之上，当一个tuple树每发射一个tuple时，storm会异或这个tuple id；每个tuple被确认后，同样异或下这个tuple的id值。当发现异或的结果为零时，storm就认为整个tuple树的所有tuple都被确认了；否则，就从根节点进行重发操作，从而保证了可靠性。<br>学习storm的acker机制后，我想到了校招时遇到的一个算法题：如何判断一个整数数组中的所有元素均是成对出现的。那时看了答案才知道怎么解这道题：就是将数组中所有元素都异或到一起，看结果就否为0。因为一个数和自己异或的值为0，因此如果结果为0，那么就说明数组中的所有数都是成对出现的了。当时觉得解法很巧妙，很高效；同时也觉得然并卵，会这种算法题有什么意义呢？现在才恍然大悟，原来这些算法题都是从实际工作中抽象、总结出来的精华啊！<br>以后要多做算法题！</p>
 
       
     </div>
@@ -125,12 +125,12 @@
     
 
     <footer class="article-footer">
-      <a data-url="http://hongwei.org/2016/07/18/storm-topology-jar/" data-id="ciqtq3yz7000589cmtek6w5y7" class="article-share-link">
+      <a data-url="http://hongwei.org/storm-acker-xor/" data-id="ciqtq3yzb000789cmo8vjle4z" class="article-share-link">
         <i class="fa fa-share"></i> Share
       </a>
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/storm/">storm</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/acker/">acker</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/storm/">storm</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/异或/">异或</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/算法/">算法</a></li></ul>
 
 
     </footer>
@@ -139,17 +139,10 @@
     
 <ul id="article-nav" class="nav nav-pills nav-justified">
   
-  <li role="presentation">
-    <a href="/2015/08/09/storm-acker-xor/" id="article-nav-older" class="article-nav-link-wrap">
-      <i class="fa fa-chevron-left pull-left"></i>
-      <span class="article-nav-link-title">学storm的acker机制有感</span>
-    </a>
-  </li>
-  
   
   <li role="presentation">
-    <a href="/2016/07/20/storm-SingleJoin/" id="article-nav-newer" class="article-nav-link-wrap">
-      <span class="article-nav-link-title">storm实例分析小结—SingleJoin</span>
+    <a href="/storm-topology-jar/" id="article-nav-newer" class="article-nav-link-wrap">
+      <span class="article-nav-link-title">在storm上提交jar包不生效的问题</span>
       <i class="fa fa-chevron-right pull-right"></i>
     </a>
   </li>
@@ -205,23 +198,23 @@
     <ul class="sidebar-module-list">
       
         <li>
-          <a href="/2016/07/20/python-unicode-decode-encode/">python的decode与encode</a>
+          <a href="/python-unicode-decode-encode/">python的decode与encode</a>
         </li>
       
         <li>
-          <a href="/2016/07/20/python-read-file-efficiently/">用Python高效的读取文件</a>
+          <a href="/python-read-file-efficiently/">用Python高效的读取文件</a>
         </li>
       
         <li>
-          <a href="/2016/07/20/storm-SingleJoin/">storm实例分析小结—SingleJoin</a>
+          <a href="/storm-SingleJoin/">storm实例分析小结—SingleJoin</a>
         </li>
       
         <li>
-          <a href="/2016/07/18/storm-topology-jar/">在storm上提交jar包不生效的问题</a>
+          <a href="/storm-topology-jar/">在storm上提交jar包不生效的问题</a>
         </li>
       
         <li>
-          <a href="/2015/08/09/storm-acker-xor/">学storm的acker机制有感</a>
+          <a href="/storm-acker-xor/">学storm的acker机制有感</a>
         </li>
       
     </ul>

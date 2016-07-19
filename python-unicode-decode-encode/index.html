@@ -3,21 +3,33 @@
 <head>
   <meta charset="utf-8">
   
-  <title>学storm的acker机制有感 | hongwei&#39;s blog</title>
+  <title>python的decode与encode | hongwei&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="storm是一个分布式实时计算系统。它最大的一个特点就是可靠性，即：保证每一个节点至少被处理一次。
-acker机制在可靠的处理过程中，storm使用acker机制维护着从spout发出的Tuple节点为根的整个Tuple树。在任何处理节点发射出的tuple都要与其父节点建立锚点，当一个tuple处理完毕时也要被确认。基于这样有保证的处理，storm需要判断在超时时间内（默认是30秒），tuple树">
+  <meta name="description" content="用python处理中文时，总会遇到编码错误。傻傻的分不清什么时候该用decode，什么时候该用encode。
+unicode首先,明确一个基本的概念:计算机用数字代表每一个字符,unicode就是这样一种通用的编码规范.
+utf8现在,unicode将每个字符表示成一个唯一的,无歧义的数字了.在计算机中如何存储这些数字呢?
+有两种解决方案:
+
+定长的: 因为unicode最大的编码数字是0x7FF">
 <meta property="og:type" content="article">
-<meta property="og:title" content="学storm的acker机制有感">
-<meta property="og:url" content="http://hongwei.org/2015/08/09/storm-acker-xor/index.html">
+<meta property="og:title" content="python的decode与encode">
+<meta property="og:url" content="http://hongwei.org/python-unicode-decode-encode/index.html">
 <meta property="og:site_name" content="hongwei's blog">
-<meta property="og:description" content="storm是一个分布式实时计算系统。它最大的一个特点就是可靠性，即：保证每一个节点至少被处理一次。
-acker机制在可靠的处理过程中，storm使用acker机制维护着从spout发出的Tuple节点为根的整个Tuple树。在任何处理节点发射出的tuple都要与其父节点建立锚点，当一个tuple处理完毕时也要被确认。基于这样有保证的处理，storm需要判断在超时时间内（默认是30秒），tuple树">
-<meta property="og:updated_time" content="2016-07-19T16:50:18.000Z">
+<meta property="og:description" content="用python处理中文时，总会遇到编码错误。傻傻的分不清什么时候该用decode，什么时候该用encode。
+unicode首先,明确一个基本的概念:计算机用数字代表每一个字符,unicode就是这样一种通用的编码规范.
+utf8现在,unicode将每个字符表示成一个唯一的,无歧义的数字了.在计算机中如何存储这些数字呢?
+有两种解决方案:
+
+定长的: 因为unicode最大的编码数字是0x7FF">
+<meta property="og:updated_time" content="2016-07-19T17:19:17.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="学storm的acker机制有感">
-<meta name="twitter:description" content="storm是一个分布式实时计算系统。它最大的一个特点就是可靠性，即：保证每一个节点至少被处理一次。
-acker机制在可靠的处理过程中，storm使用acker机制维护着从spout发出的Tuple节点为根的整个Tuple树。在任何处理节点发射出的tuple都要与其父节点建立锚点，当一个tuple处理完毕时也要被确认。基于这样有保证的处理，storm需要判断在超时时间内（默认是30秒），tuple树">
+<meta name="twitter:title" content="python的decode与encode">
+<meta name="twitter:description" content="用python处理中文时，总会遇到编码错误。傻傻的分不清什么时候该用decode，什么时候该用encode。
+unicode首先,明确一个基本的概念:计算机用数字代表每一个字符,unicode就是这样一种通用的编码规范.
+utf8现在,unicode将每个字符表示成一个唯一的,无歧义的数字了.在计算机中如何存储这些数字呢?
+有两种解决方案:
+
+定长的: 因为unicode最大的编码数字是0x7FF">
   
     <link rel="alternate" href="/atom.xml" title="hongwei&#39;s blog" type="application/atom+xml">
   
@@ -82,13 +94,13 @@ acker机制在可靠的处理过程中，storm使用acker机制维护着从spout
 
     <div class="row">
         <div class="col-sm-8 blog-main">
-          <article id="post-storm-acker-xor" class="article article-type-post" itemscope itemprop="blogPost">
+          <article id="post-python-unicode-decode-encode" class="article article-type-post" itemscope itemprop="blogPost">
 
   <header class="article-header">
     
   
     <h1 class="article-title" itemprop="name">
-      学storm的acker机制有感
+      python的decode与encode
     </h1>
   
 
@@ -97,13 +109,13 @@ acker机制在可靠的处理过程中，storm使用acker机制维护着从spout
 
   <div class="article-meta">
     <div class="article-datetime">
-  <a href="/2015/08/09/storm-acker-xor/" class="article-date"><time datetime="2015-08-09T00:59:10.000Z" itemprop="datePublished">2015-08-09</time></a>
+  <a href="/python-unicode-decode-encode/" class="article-date"><time datetime="2016-07-20T01:10:44.000Z" itemprop="datePublished">2016-07-20</time></a>
 </div>
 
     
     
   <div class="article-category">
-    <a class="article-category-link" href="/categories/分布式/">分布式</a>
+    <a class="article-category-link" href="/categories/编程语言/">编程语言</a>
   </div>
 
 
@@ -112,9 +124,26 @@ acker机制在可靠的处理过程中，storm使用acker机制维护着从spout
 
     <div class="article-entry" itemprop="articleBody">
       
-        <p>storm是一个分布式实时计算系统。它最大的一个特点就是可靠性，即：保证每一个节点至少被处理一次。</p>
-<h2 id="acker机制"><a href="#acker机制" class="headerlink" title="acker机制"></a>acker机制</h2><p>在可靠的处理过程中，storm使用acker机制维护着从spout发出的Tuple节点为根的整个Tuple树。在任何处理节点发射出的tuple都要与其父节点建立锚点，当一个tuple处理完毕时也要被确认。基于这样有保证的处理，storm需要判断在超时时间内（默认是30秒），tuple树的节点是否都被确认了。如果没有，则要从spout出发，重新发射根节点tuple。 </p>
-<h2 id="xor操作"><a href="#xor操作" class="headerlink" title="xor操作"></a>xor操作</h2><p>比较有意思的是，storm的acker机制利用了非常高效的方法来跟踪整个tuple树的确认情况。首先，storm会为每个tuple分配一个64位的数值型id；在此基础之上，当一个tuple树每发射一个tuple时，storm会异或这个tuple id；每个tuple被确认后，同样异或下这个tuple的id值。当发现异或的结果为零时，storm就认为整个tuple树的所有tuple都被确认了；否则，就从根节点进行重发操作，从而保证了可靠性。<br>学习storm的acker机制后，我想到了校招时遇到的一个算法题：如何判断一个整数数组中的所有元素均是成对出现的。那时看了答案才知道怎么解这道题：就是将数组中所有元素都异或到一起，看结果就否为0。因为一个数和自己异或的值为0，因此如果结果为0，那么就说明数组中的所有数都是成对出现的了。当时觉得解法很巧妙，很高效；同时也觉得然并卵，会这种算法题有什么意义呢？现在才恍然大悟，原来这些算法题都是从实际工作中抽象、总结出来的精华啊！<br>以后要多做算法题！</p>
+        <p>用python处理中文时，总会遇到编码错误。傻傻的分不清什么时候该用decode，什么时候该用encode。</p>
+<h1 id="unicode"><a href="#unicode" class="headerlink" title="unicode"></a>unicode</h1><p>首先,明确一个基本的概念:计算机用数字代表每一个字符,unicode就是这样一种通用的编码规范.</p>
+<h1 id="utf8"><a href="#utf8" class="headerlink" title="utf8"></a>utf8</h1><p>现在,unicode将每个字符表示成一个唯一的,无歧义的数字了.在计算机中如何存储这些数字呢?</p>
+<p>有两种解决方案:</p>
+<ul>
+<li><p>定长的: 因为unicode最大的编码数字是0x7FFFFFFF,于是为了能用一个长度固定的字节组合来表示所有可能的字符,每个字符需要8个字节.这样解析一个文本就只需要从头开始,把每八个字节转换成一个数字,查一下这个数字对应是什么字符.</p>
+</li>
+<li><p>可变长的:显然,定长的虽然解析起来简单,但是有很大的空间浪费问题.编码较小的字符是完全可以用较少的字节数来存储的,不需要为了能表示可能的编码极大的字符,就让每个字符都用最大的字节数来存储.</p>
+</li>
+</ul>
+<p>UTF-8就是这样一种字节可变长的存储方案.一个重要的问题就是,如何无歧义的知道连续几个字节存储了一个字符呢?</p>
+<p>UTF-8的编码规则很简单，只有二条：</p>
+<ul>
+<li>对于单字节的符号，字节的第一位设为0，后面7位为这个符号的unicode码。因此对于英语字母，UTF-8编码和ASCII码是相同的。</li>
+<li>对于n字节的符号（n&gt;1），第一个字节的前n位都设为1，第n+1位设为0，后面字节的前两位一律设为10。这些字节中剩下的没有提及的二进制位，全部为这个符号的unicode码。</li>
+</ul>
+<h1 id="decode解码"><a href="#decode解码" class="headerlink" title="decode解码"></a>decode解码</h1><p>因为有很多编码方案,于是用python处理非ASCII码表示外的字符(如中文字符)时,需要告诉python我们要处理的文本用的是哪个编码方案.这样python读取文本时,才知道每个字符的编码是定长的还是变长的,如果是定长的,用了几个字节;如果是变长的,怎么识别哪几个字节代表了一个字符.</p>
+<p>“中文”.decode(“utf8”)</p>
+<h1 id="encode编码"><a href="#encode编码" class="headerlink" title="encode编码"></a>encode编码</h1><p>同样的,用python写文件时,也需要告诉python,我们希望用哪个编码方案存储字符.</p>
+<p>u”中文”.encode(“utf8”)</p>
 
       
     </div>
@@ -125,12 +154,12 @@ acker机制在可靠的处理过程中，storm使用acker机制维护着从spout
     
 
     <footer class="article-footer">
-      <a data-url="http://hongwei.org/2015/08/09/storm-acker-xor/" data-id="ciqtq3yzb000789cmo8vjle4z" class="article-share-link">
+      <a data-url="http://hongwei.org/python-unicode-decode-encode/" data-id="ciqtq3yyw000189cmeukdqoek" class="article-share-link">
         <i class="fa fa-share"></i> Share
       </a>
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/acker/">acker</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/storm/">storm</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/异或/">异或</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/算法/">算法</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/python/">python</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/unicode/">unicode</a></li></ul>
 
 
     </footer>
@@ -139,13 +168,13 @@ acker机制在可靠的处理过程中，storm使用acker机制维护着从spout
     
 <ul id="article-nav" class="nav nav-pills nav-justified">
   
-  
   <li role="presentation">
-    <a href="/2016/07/18/storm-topology-jar/" id="article-nav-newer" class="article-nav-link-wrap">
-      <span class="article-nav-link-title">在storm上提交jar包不生效的问题</span>
-      <i class="fa fa-chevron-right pull-right"></i>
+    <a href="/python-read-file-efficiently/" id="article-nav-older" class="article-nav-link-wrap">
+      <i class="fa fa-chevron-left pull-left"></i>
+      <span class="article-nav-link-title">用Python高效的读取文件</span>
     </a>
   </li>
+  
   
 </ul>
 
@@ -198,23 +227,23 @@ acker机制在可靠的处理过程中，storm使用acker机制维护着从spout
     <ul class="sidebar-module-list">
       
         <li>
-          <a href="/2016/07/20/python-unicode-decode-encode/">python的decode与encode</a>
+          <a href="/python-unicode-decode-encode/">python的decode与encode</a>
         </li>
       
         <li>
-          <a href="/2016/07/20/python-read-file-efficiently/">用Python高效的读取文件</a>
+          <a href="/python-read-file-efficiently/">用Python高效的读取文件</a>
         </li>
       
         <li>
-          <a href="/2016/07/20/storm-SingleJoin/">storm实例分析小结—SingleJoin</a>
+          <a href="/storm-SingleJoin/">storm实例分析小结—SingleJoin</a>
         </li>
       
         <li>
-          <a href="/2016/07/18/storm-topology-jar/">在storm上提交jar包不生效的问题</a>
+          <a href="/storm-topology-jar/">在storm上提交jar包不生效的问题</a>
         </li>
       
         <li>
-          <a href="/2015/08/09/storm-acker-xor/">学storm的acker机制有感</a>
+          <a href="/storm-acker-xor/">学storm的acker机制有感</a>
         </li>
       
     </ul>

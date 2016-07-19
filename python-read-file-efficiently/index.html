@@ -3,27 +3,24 @@
 <head>
   <meta charset="utf-8">
   
-  <title>storm实例分析小结—SingleJoin | hongwei&#39;s blog</title>
+  <title>用Python高效的读取文件 | hongwei&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="流聚合是storm的一个常见模式，storm官方给出了相关的实例：SingleJoinExample。
-锚点anchor在网上找到了一个对该实例讲解的博文：Storm常见模式——流聚合。讲解的还算清楚，不过最后有一个错误：
-
-最后通过_collector将parts中存放的tuple和聚合后的输出结果发射出去，并ack这些tuple已经处理成功。_collector.emit(new ArrayL">
+  <meta name="description" content="参考:http://stackoverflow.com/questions/8009882/how-to-read-large-file-line-by-line-in-python
+用python读文件时,python提供了三个基本的函数: read, readline, readlines.
+通常,处理普通大小的文件时,我会无脑的使用 readlines  读文件. 实际上,调用readlin">
 <meta property="og:type" content="article">
-<meta property="og:title" content="storm实例分析小结—SingleJoin">
-<meta property="og:url" content="http://hongwei.org/2016/07/20/storm-SingleJoin/index.html">
+<meta property="og:title" content="用Python高效的读取文件">
+<meta property="og:url" content="http://hongwei.org/python-read-file-efficiently/index.html">
 <meta property="og:site_name" content="hongwei's blog">
-<meta property="og:description" content="流聚合是storm的一个常见模式，storm官方给出了相关的实例：SingleJoinExample。
-锚点anchor在网上找到了一个对该实例讲解的博文：Storm常见模式——流聚合。讲解的还算清楚，不过最后有一个错误：
-
-最后通过_collector将parts中存放的tuple和聚合后的输出结果发射出去，并ack这些tuple已经处理成功。_collector.emit(new ArrayL">
-<meta property="og:updated_time" content="2016-07-19T16:48:50.000Z">
+<meta property="og:description" content="参考:http://stackoverflow.com/questions/8009882/how-to-read-large-file-line-by-line-in-python
+用python读文件时,python提供了三个基本的函数: read, readline, readlines.
+通常,处理普通大小的文件时,我会无脑的使用 readlines  读文件. 实际上,调用readlin">
+<meta property="og:updated_time" content="2016-07-19T17:07:05.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="storm实例分析小结—SingleJoin">
-<meta name="twitter:description" content="流聚合是storm的一个常见模式，storm官方给出了相关的实例：SingleJoinExample。
-锚点anchor在网上找到了一个对该实例讲解的博文：Storm常见模式——流聚合。讲解的还算清楚，不过最后有一个错误：
-
-最后通过_collector将parts中存放的tuple和聚合后的输出结果发射出去，并ack这些tuple已经处理成功。_collector.emit(new ArrayL">
+<meta name="twitter:title" content="用Python高效的读取文件">
+<meta name="twitter:description" content="参考:http://stackoverflow.com/questions/8009882/how-to-read-large-file-line-by-line-in-python
+用python读文件时,python提供了三个基本的函数: read, readline, readlines.
+通常,处理普通大小的文件时,我会无脑的使用 readlines  读文件. 实际上,调用readlin">
   
     <link rel="alternate" href="/atom.xml" title="hongwei&#39;s blog" type="application/atom+xml">
   
@@ -88,13 +85,13 @@
 
     <div class="row">
         <div class="col-sm-8 blog-main">
-          <article id="post-storm-SingleJoin" class="article article-type-post" itemscope itemprop="blogPost">
+          <article id="post-python-read-file-efficiently" class="article article-type-post" itemscope itemprop="blogPost">
 
   <header class="article-header">
     
   
     <h1 class="article-title" itemprop="name">
-      storm实例分析小结—SingleJoin
+      用Python高效的读取文件
     </h1>
   
 
@@ -103,13 +100,13 @@
 
   <div class="article-meta">
     <div class="article-datetime">
-  <a href="/2016/07/20/storm-SingleJoin/" class="article-date"><time datetime="2016-07-20T00:43:10.000Z" itemprop="datePublished">2016-07-20</time></a>
+  <a href="/python-read-file-efficiently/" class="article-date"><time datetime="2016-07-20T00:53:49.000Z" itemprop="datePublished">2016-07-20</time></a>
 </div>
 
     
     
   <div class="article-category">
-    <a class="article-category-link" href="/categories/分布式/">分布式</a>
+    <a class="article-category-link" href="/categories/编程语言/">编程语言</a>
   </div>
 
 
@@ -118,17 +115,16 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <p>流聚合是storm的一个常见模式，storm官方给出了相关的实例：<a href="https://github.com/apache/storm/blob/master/examples/storm-starter/src/jvm/storm/starter/SingleJoinExample.java" target="_blank" rel="external">SingleJoinExample</a>。</p>
-<h2 id="锚点anchor"><a href="#锚点anchor" class="headerlink" title="锚点anchor"></a>锚点anchor</h2><p>在网上找到了一个对该实例讲解的博文：<a href="http://www.cnblogs.com/panfeng412/archive/2012/06/04/storm-common-patterns-of-stream-join.html" target="_blank" rel="external">Storm常见模式——流聚合</a>。讲解的还算清楚，不过最后有一个错误：</p>
-<blockquote>
-<p>最后通过_collector将parts中存放的tuple和聚合后的输出结果发射出去，并ack这些tuple已经处理成功。<br>_collector.emit(new ArrayList<tuple>(parts.values()), joinResult);</tuple></p>
-</blockquote>
-<p>问题在于，<code>parts</code>中存放的<code>tuple:new ArrayList&lt;Tuple&gt;(parts.values())</code>不是被发射出去了，而是作为<code>joinResult</code>设置为锚点(<code>anchor</code>)了。锚点的概念作用见：<a href="http://storm.apache.org/releases/current/Guaranteeing-message-processing.html" target="_blank" rel="external">Guaranteeing-message-processing</a>。</p>
-<h2 id="TimeCacheMap"><a href="#TimeCacheMap" class="headerlink" title="TimeCacheMap"></a>TimeCacheMap</h2><p>在这个实例中还提到了storm中一个很高效的数据结构：<code>TimeCacheMap</code>。如果你需要一个带有过期删除功能的Map作为缓存数据结构，TimeCacheMap是一个很高效的解决方案。这篇博文<a href="http://www.cnblogs.com/mushroom/p/4805413.html" target="_blank" rel="external">探索c#之storm的TimeCacheMap</a>对TimeCacheMap讲解的非常赞！相比来说，徐明明的<a href="http://xumingming.sinaapp.com/395/twitter-storm-code-analysis-timecahcemap/" target="_blank" rel="external">Twitter Storm源代码分析之TimeCacheMap</a>讲解就逊色了些，他对该数据结构的效率的解释有误，讲解的例子也不够到位：</p>
-<blockquote>
-<p>那为什么说时间是expirationSecs到expirationSecs * (1 + 1 / (numBuckets-1))之间呢？因为线程调度的不确定性。</p>
-</blockquote>
-<p>这个解释有点想当然了。我觉得延迟是由于数据随机到达,而删除操作是定时的.<br>TimeCacheMap优点是删除时间是O(1)的；缺点是对于大部分数据，删除操作会有延迟。</p>
+        <p>参考:<a href="http://stackoverflow.com/questions/8009882/how-to-read-large-file-line-by-line-in-python" target="_blank" rel="external">http://stackoverflow.com/questions/8009882/how-to-read-large-file-line-by-line-in-python</a></p>
+<p>用python读文件时,python提供了三个基本的函数: read, readline, readlines.</p>
+<p>通常,处理普通大小的文件时,我会无脑的使用 readlines  读文件. 实际上,调用readlines会一次加载全部文件内容到内存中,并按行保存为列表. 因此,如果文件大到内存放不下时,readlines就不适用了.</p>
+<p>为此,我选择用readline逐行的将文本加载到内存,代码如下:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">while</span> <span class="keyword">True</span>: </div><div class="line">    line = f.readline()</div><div class="line">    <span class="keyword">if</span> <span class="keyword">not</span> line : <span class="keyword">break</span></div><div class="line">    do something <span class="keyword">with</span> line</div></pre></td></tr></table></figure>
+<p>这样做虽然可以处理大文本了,但是读取效率会被磁盘io的速度拖累.</p>
+<p>进而,也许我们可以使用read(size)方法一次加载size长度的数据到内存,但是我们不得不手动将读取到的数据切分成行.并且要处理某一行被截断的情况.</p>
+<p>其实,依靠python强大的功能,我们可以用如下的更优雅的方法:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">with</span> open(...) <span class="keyword">as</span> f:</div><div class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> f:</div><div class="line">        &lt;do something <span class="keyword">with</span> line&gt;</div></pre></td></tr></table></figure>
+<p>python自动帮我们处理io缓存,内存管理等问题.经过我实践操作,效率至少比用readline高一倍以上.</p>
 
       
     </div>
@@ -139,12 +135,12 @@
     
 
     <footer class="article-footer">
-      <a data-url="http://hongwei.org/2016/07/20/storm-SingleJoin/" data-id="ciqtq3yz3000489cmyruerli2" class="article-share-link">
+      <a data-url="http://hongwei.org/python-read-file-efficiently/" data-id="ciqtq3yyr000089cms611an7r" class="article-share-link">
         <i class="fa fa-share"></i> Share
       </a>
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/TimeCacheMap/">TimeCacheMap</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/python/">python</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/读文件/">读文件</a></li></ul>
 
 
     </footer>
@@ -154,16 +150,16 @@
 <ul id="article-nav" class="nav nav-pills nav-justified">
   
   <li role="presentation">
-    <a href="/2016/07/18/storm-topology-jar/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/storm-SingleJoin/" id="article-nav-older" class="article-nav-link-wrap">
       <i class="fa fa-chevron-left pull-left"></i>
-      <span class="article-nav-link-title">在storm上提交jar包不生效的问题</span>
+      <span class="article-nav-link-title">storm实例分析小结—SingleJoin</span>
     </a>
   </li>
   
   
   <li role="presentation">
-    <a href="/2016/07/20/python-read-file-efficiently/" id="article-nav-newer" class="article-nav-link-wrap">
-      <span class="article-nav-link-title">用Python高效的读取文件</span>
+    <a href="/python-unicode-decode-encode/" id="article-nav-newer" class="article-nav-link-wrap">
+      <span class="article-nav-link-title">python的decode与encode</span>
       <i class="fa fa-chevron-right pull-right"></i>
     </a>
   </li>
@@ -219,23 +215,23 @@
     <ul class="sidebar-module-list">
       
         <li>
-          <a href="/2016/07/20/python-unicode-decode-encode/">python的decode与encode</a>
+          <a href="/python-unicode-decode-encode/">python的decode与encode</a>
         </li>
       
         <li>
-          <a href="/2016/07/20/python-read-file-efficiently/">用Python高效的读取文件</a>
+          <a href="/python-read-file-efficiently/">用Python高效的读取文件</a>
         </li>
       
         <li>
-          <a href="/2016/07/20/storm-SingleJoin/">storm实例分析小结—SingleJoin</a>
+          <a href="/storm-SingleJoin/">storm实例分析小结—SingleJoin</a>
         </li>
       
         <li>
-          <a href="/2016/07/18/storm-topology-jar/">在storm上提交jar包不生效的问题</a>
+          <a href="/storm-topology-jar/">在storm上提交jar包不生效的问题</a>
         </li>
       
         <li>
-          <a href="/2015/08/09/storm-acker-xor/">学storm的acker机制有感</a>
+          <a href="/storm-acker-xor/">学storm的acker机制有感</a>
         </li>
       
     </ul>
